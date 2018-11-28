@@ -42,6 +42,19 @@ module.exports = {
       ],
       default: 'none'
     },
+    srcDir: {
+      message: 'Choose project source directory',
+      type: 'list',
+      choices: [
+        {
+          name: 'none',
+          value: ''
+        },
+        'src'
+      ],
+      default: '',
+      when: (answers) => answers.server !== 'adonis'
+    },
     ui: {
       message: 'Use a custom UI framework',
       type: 'list',
@@ -129,18 +142,28 @@ module.exports = {
     let nuxtDir
     if (answers.server === 'adonis') {
       nuxtDir = 'resources'
+    } else {
+      nuxtDir = answers.srcDir
     }
+
+    let postMoves = null
+    if (answers.server === 'adonis') {
+      postMoves = {
+        'server/index-*.js': 'server.js',
+        'nuxt/nuxt.config.js': 'config/nuxt.js'
+      }
+    } else {
+      postMoves = {
+        'nuxt/nuxt.config.js': 'nuxt.config.js'
+      }
+    }
+
     return Object.assign(
       moveable,
       move('nuxt', nuxtDir),
       moveFramework(answers.server),
       moveFramework(answers.ui, nuxtDir),
-      answers.server === 'adonis'
-        ? {
-            'server/index-*.js': 'server.js',
-            'nuxt/nuxt.config.js': 'config/nuxt.js'
-          }
-        : null
+      postMoves
     )
   },
   post(

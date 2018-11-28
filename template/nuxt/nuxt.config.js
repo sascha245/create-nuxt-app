@@ -1,7 +1,10 @@
 <% if (server === 'adonis') { %>const pkg = require('../package')
-const resolve = require('path').resolve
 <% } else { %>const pkg = require('./package')
 <% } %>
+
+<% if (server === 'adonis' || srcDir.length) { %>const resolve = require('path').resolve
+<% } %>
+
 <% if (ui === 'vuetify') { %>
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 <% } %>
@@ -9,7 +12,10 @@ module.exports = {
   mode: '<%= mode %>',
 <% if (server === 'adonis') { %>
   srcDir: resolve(__dirname, '..', 'resources'),
+<% } else if (srcDir.length) { %>
+  srcDir: resolve(__dirname, 'src'),
 <% } %>
+
   /*
   ** Headers of the page
   */
